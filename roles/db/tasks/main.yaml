@@ -1,4 +1,4 @@
-- name: Install Mysql Server
+  - name: Install Mysql Server
     dnf:
       name: mysql-server
       state: latest
