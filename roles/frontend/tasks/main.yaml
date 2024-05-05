@@ -1,0 +1,37 @@
+  - name: install nginx
+    ansible.builtin.dnf:  #If i want this to work in all distributions then use this package other wise yum or dnf
+      name: nginx
+      state: latest  # latest version it will install
+
+  - name: Start & Enable Nginx
+    ansible.builtin.service:
+      name: nginx
+      state: started
+      enabled: yes  # it will enable nginx service as well
+
+  - name: default default directory 
+    ansible.builtin.file: 
+      path: /usr/share/nginx/html # /usr/share/nginx/html/* - it is not deleting anything so we deleting html directory and create again
+      state: absent  # it will remove the directory
+
+  - name: create directory html
+    ansible.builtin.file: 
+      path: /usr/share/nginx/html 
+      state: directory
+
+  - name: Download & Unzip the file at a time
+    ansible.builtin.unarchive: 
+      src: https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
+      dest: /usr/share/nginx/html
+      remote_src: yes
+
+  - name: copy the backend service to remote server
+    ansible.builtin.template: 
+      src: expense.conf.j2
+      dest: /etc/nginx/default.d/expense.conf
+    notify: Restart Nginx
+
+  # - name: Restart Nginx
+  #   ansible.builtin.service:
+  #     name: nginx
+  #     state: restarted
