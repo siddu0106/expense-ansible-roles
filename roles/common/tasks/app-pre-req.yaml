@@ -1,15 +1,15 @@
-- name: Remove directory 
+  - name: Remove directory 
     ansible.builtin.file: 
       path: "{{ app_directory_location }}" 
       state: absent  
-    #ignore_errors: yes
 
-- name: Create directory 
+
+  - name: Create directory 
     ansible.builtin.file: 
       path: "{{ app_directory_location }}" # where u want to create provide path
       state: directory  
 
-- name: Download & Unzip the file at a time
+  - name: Download & Unzip the file at a time
     ansible.builtin.unarchive: 
       src: https://expense-builds.s3.us-east-1.amazonaws.com/expense-{{component}}-v2.zip
       dest: "{{ app_directory_location }}"
