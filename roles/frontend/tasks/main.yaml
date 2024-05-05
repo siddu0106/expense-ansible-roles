@@ -8,22 +8,27 @@
       name: nginx
       state: started
       enabled: yes  # it will enable nginx service as well
+  
+  - name: Re-Usable code
+    ansible.builtin.import_role:
+      name: common
+      tasks_from: app-pre-req
 
-  - name: default default directory 
-    ansible.builtin.file: 
-      path: /usr/share/nginx/html # /usr/share/nginx/html/* - it is not deleting anything so we deleting html directory and create again
-      state: absent  # it will remove the directory
+  # - name: default default directory 
+  #   ansible.builtin.file: 
+  #     path: /usr/share/nginx/html # /usr/share/nginx/html/* - it is not deleting anything so we deleting html directory and create again
+  #     state: absent  # it will remove the directory
 
-  - name: create directory html
-    ansible.builtin.file: 
-      path: /usr/share/nginx/html 
-      state: directory
+  # - name: create directory html
+  #   ansible.builtin.file: 
+  #     path: /usr/share/nginx/html 
+  #     state: directory
 
-  - name: Download & Unzip the file at a time
-    ansible.builtin.unarchive: 
-      src: https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
-      dest: /usr/share/nginx/html
-      remote_src: yes
+  # - name: Download & Unzip the file at a time
+  #   ansible.builtin.unarchive: 
+  #     src: https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
+  #     dest: /usr/share/nginx/html
+  #     remote_src: yes
 
   - name: copy the backend service to remote server
     ansible.builtin.template: 

@@ -2,3 +2,5 @@ mysql_root_password: ExpenseApp@1
 login_host: mysql.projexpenses78.online
 login_user: root
 DB_HOST: mysql.projexpenses78.online
+app_directory_location: /app
+component: backend

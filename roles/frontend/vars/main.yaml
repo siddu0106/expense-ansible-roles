@@ -1,1 +1,3 @@
 BACKEND_HOST: backend.projexpenses78.online
+app_directory_location: /usr/share/nginx/html
+component: frontend
