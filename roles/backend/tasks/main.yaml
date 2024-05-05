@@ -1,0 +1,69 @@
+  - name: Disable default nodejs package
+    command: dnf module disable nodejs -y
+
+  - name: Enable nodejs:20 package
+    command: dnf module disable nodejs:20 -y
+
+  - name: install nodejs & mysql client
+    ansible.builtin.dnf:  #If i want this to work in all distributions then use package other wise yum or dnf (Redhat)
+      name: "{{item}}"
+      state: latest  # latest version it will install
+    loop:
+    - nodejs
+    - mysql
+
+  - name: Create User 
+    ansible.builtin.user: 
+      name: expense
+
+  - name: Create directory 
+    ansible.builtin.file: 
+      path: /app # where u want to create provide path
+      state: directory # if we mention directory then only it will create a directory. otherwise by default file will be created
+
+  - name: Download the file 
+    ansible.builtin.get_url: 
+      url: https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip  #provide the url, it will download the file
+      dest: /tmp/backend.zip  # store the file here 
+
+  - name: Unzip the file which is present in remote server
+    ansible.builtin.unarchive: 
+      src: /tmp/backend.zip # by default it will check in ansible server this path exist or not. but we have to tell it's in remote
+      dest: /app
+      remote_src: yes # We use this argument to tell src path in remote only not in ansible server
+
+  - name: Install npm dependencies
+    command: npm install
+    args:
+      chdir: /app #before running the command it will check the directory and run there 
+
+  - name: copy the backend service to remote server
+    ansible.builtin.templates: 
+      src: backend.service.j2
+      dest: /etc/systemd/system/backend.service
+
+  - name: Install python mysql dependencies
+    ansible.builtin.pip:
+      name: #list
+      - PyMySQL # to connect mysql from ansible
+      - cryptography # if u want to use pwd in command line we have to use this one 
+      executable: pip3.9 # based on ansible version. If python version is 3.9 then use 3.9  
+
+  - name: Make the db connection and load the schema 
+    community.mysql.mysql_db:  
+      login_user: "{{ login_user }}"
+      login_password: "{{ mysql_root_password }}"
+      login_host: "{{ login_host }}"
+      target: /app/schema/backend.sql # which file are u dumping into the db server
+      state: import # state: dump - we have to use this when we take full db backup and dumping to new db
+      name: all #we have to use name argument, if u use state as dump/import
+
+  - name: daemon reload 
+    ansible.builtin.systemd_service: 
+      daemon_reload: true
+
+  - name: Start & Enable backend service
+    ansible.builtin.service:
+      name: backend
+      state: started
+      enabled: yes
