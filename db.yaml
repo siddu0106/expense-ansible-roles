@@ -1,5 +1,5 @@
 - name : Configure MySQL db server
   hosts: db
   become: yes
-  roles:
+  roles: #list
   - db

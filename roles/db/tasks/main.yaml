@@ -29,9 +29,9 @@
 
   - name: Check pwd is setup or not 
     community.mysql.mysql_info:  
-      login_user: root
+      login_user: "{{login_user}}"
       login_password: "{{mysql_root_password}}"
-      login_host: mysql.projexpenses78.online
+      login_host: "{{login_host}}"
       filter: version # how u check version of anything ansible --version/mysql-server --version. If it's shows something then success
     ignore_errors: true
     register: mysql_connection_output
