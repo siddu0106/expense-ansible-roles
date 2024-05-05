@@ -47,5 +47,5 @@
   # so we are writing - name: Install python mysql dependencies  above  - name: Check pwd is setup or not
  
   - name: Setup mysql root pwd
-    command: mysql_secure_installation --set-root-pass ExpenseApp@1
+    command: mysql_secure_installation --set-root-pass {{mysql_root_password}}
     when: mysql_connection_output.failed is true # don't give {{}} in when condition
