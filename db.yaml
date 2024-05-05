@@ -1,5 +1,7 @@
 - name : Configure MySQL db server
   hosts: db
+  vars_files:
+  - credentials.yaml
   become: yes
   roles: #list
   - db
