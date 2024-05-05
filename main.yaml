@@ -1,5 +1,5 @@
 - name : Configure "{{ component }}" server
-  hosts: backend
+  hosts: "{{ component }}"
   become: yes
   roles: #list
   - "{{ component }}"
