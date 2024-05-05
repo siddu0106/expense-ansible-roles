@@ -1,0 +1,51 @@
+- name: Install Mysql Server
+    dnf:
+      name: mysql-server
+      state: latest
+  
+  - name: Print Success message
+    debug:
+      msg: "MYSQL server installed successfully"
+
+  - name: Start & enable Mysql Server
+    service:
+      name: mysqld
+      state: started
+      enabled: yes
+    
+  - name: Print Success message
+    debug:
+      msg: "MYSQL server Started & enabled successfully"
+  
+
+  - name: Install python mysql dependencies
+    ansible.builtin.pip:
+      name: #list
+      - PyMySQL
+      - cryptography # if u want to use pwd in command line we have to use this one 
+      executable: pip3.9 # based on ansible version. If python version is 3.9 then use 3.9     
+
+  # u can check ansible mysql setup module in google
+
+  - name: Check pwd is setup or not 
+    community.mysql.mysql_info:  
+      login_user: root
+      login_password: "{{mysql_root_password}}"
+      login_host: mysql.projexpenses78.online
+      filter: version # how u check version of anything ansible --version/mysql-server --version. If it's shows something then success
+    ignore_errors: true
+    register: mysql_connection_output
+
+  - name: Print Success message
+    debug:
+      msg: "Mysql connection output is: {{mysql_connection_output}}"
+
+  # Ansible is developed in python
+  # It's asking some dependency (PyMySQL) to install to connect ansible to mysql 
+  # npm install - to install node.js dependencies
+  # pip - to install pthon dependencies
+  # so we are writing - name: Install python mysql dependencies  above  - name: Check pwd is setup or not
+ 
+  - name: Setup mysql root pwd
+    command: mysql_secure_installation --set-root-pass ExpenseApp@1
+    when: mysql_connection_output.failed is true # don't give {{}} in when condition
